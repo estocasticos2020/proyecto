@@ -83,7 +83,7 @@ def simulate(network):
 
 param = input("""ingrese 1 para definir los parametros o otro valor para ejecturar la simulacion por defecto con: 
  incremento de p = 0.001 
- cantidad de interaciones =200  
+ cantidad de simulaciones para cada p = 200  
  filas = 5  
  columnas = 5\n""")
 
@@ -107,12 +107,12 @@ k=0
 for i in range (0, int(1/increment)+1):
     aux=0
     for j in range(0, iterations):        
-        #simular tablero de rocas
+        #simular nueva red
         network = rand_network(rows,columns,k)
         if (simulate(network)):
             #si hay un camino sumar uno 
             aux+=1
-    #p = numero de tableros con camino / numero de tableros simulados
+    #p = numero de redes con camino / numero de redes simuladas
     p=aux/iterations
     ans[0].append(k)
     ans[1].append(p)
@@ -120,4 +120,5 @@ for i in range (0, int(1/increment)+1):
 plt.plot(ans[0],ans[1])
 plt.ylabel("theta(p)")
 plt.xlabel("p")
+plt.grid()
 plt.show()
