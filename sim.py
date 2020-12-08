@@ -1,64 +1,64 @@
 import random
 import matplotlib.pyplot as plt
-#genera tablero aleatorio
-#p: probabilidad de roca hueca, n cantidad de filas de la roca
-#m: cantidad de columnas de la roca
-def rand_board(n,m,p):
-    board = []
+#genera red aleatorio
+#p: probabilidad de que un nodo este desconectado, n cantidad de filas de la red
+#m: cantidad de columnas de la red
+def rand_network(n,m,p):
+    network = []
     for i in range (0,n):
-        board.append([])
+        network.append([])
         for j in range (0,m):
             rand = random.random()
             if rand<p:
-                board[i].append(True)
-                #la roca es hueca
+                network[i].append(True)
+                #el nodo esta conenctado
             else:
-                board[i].append(False)
-                #la roca es solida
+                network[i].append(False)
+                #el nodo esta desconectado
     # for i in range(0,n):
     #     for j in range (0,m):
     #         print (board[i][j],end="\t")
     #     print()
     # print("------------------------")
-    return board
+    return network
 
-#retorna las posiciones donde hay hueco en una fila
-def ret_row_true(l,n):
+#retorna las posiciones donde un nodo esta conectado en una fila
+def ret_row_true(network,row):
     ans = []
-    for i in range (0,len(l)):
-        if l[n][i]:
-            ans.append([n,i])
+    for i in range (0,len(network[row])):
+        if network[row][i]:
+            ans.append([row,i])
     return ans
 
-# retorna verdadero si hay un camino a traves del tablero desde un punto inicial 
+# retorna verdadero si hay un camino a traves de la red desde un punto inicial 
 # se van añadiendo todos los nodos a los que se puede accerder directamente desde 
 # el nodo inicial a una lista, despues se toman los nodos que se añadieron y se hace 
 # lo mismo hasta que se llega hasta lu ultima fila (hay camino) o ya no se puede avanzar mas 
-def find_path(board,visited,inicial,path):
+def find_path(network,visited,inicial,path):
     j=0
-    rows= len (board)
-    columns= len(board[0])
+    rows= len (network)
+    columns= len(network[0])
     while True:
         try:
             row = path[j][0]
             column = path[j][1]
-            if path[j][0]==rows-1 and board[row][column]:
+            if path[j][0]==rows-1 and network[row][column]:
                 return True
             if row-1>=0:
-                if board[row-1] [column] and not (str([row-1,column]) in visited):
+                if network[row-1] [column] and not (str([row-1,column]) in visited):
                     path.append([row-1,column])
                     visited.add(str([row-1,column]))
             if row+1<rows:
-                if board[row+1] [column] and not (str([row+1,column]) in visited):
+                if network[row+1] [column] and not (str([row+1,column]) in visited):
                     if row+1 == rows-1: return True
                     path.append([row+1,column])
                     visited.add(str([row+1,column]))
             if column-1>=0:
-                if board[row] [column-1] and not (str([row,column-1]) in visited):
+                if network[row] [column-1] and not (str([row,column-1]) in visited):
                     path.append([row,column-1])
                     visited.add(str([row,column-1]))
             if column+1<columns:
-                if board[row] [column+1] and not (str([row,column+1]) in visited):
+                if network[row] [column+1] and not (str([row,column+1]) in visited):
                     path.append([row,column+1])
                     visited.add(str([row,column+1]))
             j+=1 
@@ -67,9 +67,9 @@ def find_path(board,visited,inicial,path):
     return False
 
 #retorna true si ha un camino posible o false si no hay caminos
-def simulate(board):
-    inicial = ret_row_true(board,0)
-    final = ret_row_true(board,len(board)-1)
+def simulate(network):
+    inicial = ret_row_true(network,0)
+    final = ret_row_true(network,len(network)-1)
     if len(inicial)<=0 or len(final)<=0:
         return False
     for i in range(0,len(inicial)):
@@ -77,11 +77,15 @@ def simulate(board):
         visited = set()
         path.append(inicial[i])
         visited.add(str(inicial[i]))
-        if find_path(board,visited,inicial,path):
+        if find_path(network,visited,inicial,path):
             return True
     return False
 
-param = input("ingrese 1 para definir los parametros o otro valor para ejecturar la simulacion por defecto ")
+param = input("""ingrese 1 para definir los parametros o otro valor para ejecturar la simulacion por defecto con: 
+ incremento de p = 0.001 
+ cantidad de interaciones =200  
+ filas = 5  
+ columnas = 5\n""")
 
 if param == ("1"):
     increment=float(input("incremento de p (delta p) "))
@@ -104,8 +108,8 @@ for i in range (0, int(1/increment)+1):
     aux=0
     for j in range(0, iterations):        
         #simular tablero de rocas
-        board = rand_board(rows,columns,k)
-        if (simulate(board)):
+        network = rand_network(rows,columns,k)
+        if (simulate(network)):
             #si hay un camino sumar uno 
             aux+=1
     #p = numero de tableros con camino / numero de tableros simulados
